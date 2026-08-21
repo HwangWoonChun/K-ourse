@@ -29,9 +29,12 @@ final class CourseViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var loadingStep: LoadingStep = .location
     @Published var errorMessage: String?
+    @Published var courseExplanation: String?
+    @Published var isGeneratingExplanation = false
 
     private let tourAPI = TourAPIService.shared
     private let naverDir = NaverDirectionsService.shared
+    private let ai = OnDeviceAIService.shared
 
     func generateCourse(
         latitude: Double,
@@ -98,6 +101,18 @@ final class CourseViewModel: ObservableObject {
             loadingStep = .done
             steps = courseSteps
             totalDurationSeconds = total
+            courseExplanation = nil
+
+            // 온디바이스 AI로 코스 설명 생성
+            isGeneratingExplanation = true
+            let explanation = await ai.explainCourse(
+                spots: selected,
+                theme: theme,
+                duration: duration,
+                isIndoor: isIndoor
+            )
+            courseExplanation = explanation
+            isGeneratingExplanation = false
 
         } catch {
             errorMessage = error.localizedDescription

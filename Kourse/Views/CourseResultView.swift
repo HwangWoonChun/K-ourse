@@ -15,6 +15,7 @@ struct CourseResultView: View {
 
     // 지도 카메라 업데이트 트리거
     @State private var mapUpdateTrigger: UUID = UUID()
+    @State private var isAIExpanded = false
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -29,6 +30,7 @@ struct CourseResultView: View {
                     VStack(spacing: 0) {
                         mapSection
                         infoHeader
+                        aiAnalysisSection
                         spotList
                     }
                 }
@@ -91,6 +93,63 @@ struct CourseResultView: View {
         .padding(.horizontal, 24)
         .padding(.vertical, 20)
         .background(Color.kBackground)
+    }
+
+    // MARK: - AI 분석 섹션
+
+    @ViewBuilder
+    private var aiAnalysisSection: some View {
+        if vm.isGeneratingExplanation || vm.courseExplanation != nil {
+            VStack(spacing: 0) {
+                // 헤더 (토글 버튼)
+                Button {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        isAIExpanded.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.purple)
+                        Text("AI 분석")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.kTextPrimary)
+                        Spacer()
+                        if vm.isGeneratingExplanation {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        } else {
+                            Image(systemName: isAIExpanded ? "chevron.up" : "chevron.down")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.kTextSecondary)
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 14)
+                    .background(Color.purple.opacity(0.06))
+                }
+                .buttonStyle(.plain)
+                .disabled(vm.isGeneratingExplanation)
+
+                // 펼쳐진 내용
+                if isAIExpanded, let text = vm.courseExplanation {
+                    Text(text)
+                        .font(.system(size: 14))
+                        .foregroundColor(.kTextPrimary)
+                        .lineSpacing(5)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.purple.opacity(0.04))
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+
+                Divider()
+            }
+            .onChange(of: vm.courseExplanation) { _, newVal in
+                if newVal != nil { isAIExpanded = true }
+            }
+        }
     }
 
     // MARK: - 장소 목록
