@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4FAF402B3037CEC000D857EE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4FAF402A3037CEC000D857EE /* FirebaseAuth */; };
+		4FAF402D3037CEC000D857EE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 4FAF402C3037CEC000D857EE /* FirebaseAuthCombine-Community */; };
+		4FAF40303037CF2300D857EE /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4FAF402F3037CF2300D857EE /* KakaoSDKAuth */; };
+		4FAF40323037CF2300D857EE /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = 4FAF40313037CF2300D857EE /* KakaoSDKUser */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		4FAE1445302EA9F4004788B0 /* Kourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +30,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FAF40323037CF2300D857EE /* KakaoSDKUser in Frameworks */,
+				4FAF402B3037CEC000D857EE /* FirebaseAuth in Frameworks */,
+				4FAF402D3037CEC000D857EE /* FirebaseAuthCombine-Community in Frameworks */,
+				4FAF40303037CF2300D857EE /* KakaoSDKAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +76,10 @@
 			);
 			name = Kourse;
 			packageProductDependencies = (
+				4FAF402A3037CEC000D857EE /* FirebaseAuth */,
+				4FAF402C3037CEC000D857EE /* FirebaseAuthCombine-Community */,
+				4FAF402F3037CF2300D857EE /* KakaoSDKAuth */,
+				4FAF40313037CF2300D857EE /* KakaoSDKUser */,
 			);
 			productName = Kourse;
 			productReference = 4FAE1445302EA9F4004788B0 /* Kourse.app */;
@@ -94,6 +109,10 @@
 			);
 			mainGroup = 4FAE143C302EA9F4004788B0;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4FAF40293037CEC000D857EE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				4FAF402E3037CF2300D857EE /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4FAE1446302EA9F4004788B0 /* Products */;
 			projectDirPath = "";
@@ -251,11 +270,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = Kourse/Kourse.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PU7DWTK8ZH;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = PU7DWTK8ZH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "쾌적한 여행 코스를 짜기위해 위치권한 동의가 필요해요.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "쾌적한 여행 코스를 짜기위해 위치권한 동의가 필요해요.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -268,6 +294,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.co.kr.powerScout.Kourse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = dev_kourse;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -283,11 +311,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = Kourse/KourseRelease.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PU7DWTK8ZH;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "쾌적한 여행 코스를 짜기위해 위치권한 동의가 필요해요.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "쾌적한 여행 코스를 짜기위해 위치권한 동의가 필요해요.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -300,6 +333,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.co.kr.powerScout.Kourse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -332,6 +366,48 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4FAF40293037CEC000D857EE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.18.0;
+			};
+		};
+		4FAF402E3037CF2300D857EE /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.28.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4FAF402A3037CEC000D857EE /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FAF40293037CEC000D857EE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		4FAF402C3037CEC000D857EE /* FirebaseAuthCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FAF40293037CEC000D857EE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseAuthCombine-Community";
+		};
+		4FAF402F3037CF2300D857EE /* KakaoSDKAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FAF402E3037CF2300D857EE /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKAuth;
+		};
+		4FAF40313037CF2300D857EE /* KakaoSDKUser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FAF402E3037CF2300D857EE /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKUser;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4FAE143D302EA9F4004788B0 /* Project object */;
 }

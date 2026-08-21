@@ -7,9 +7,19 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseCore
+import KakaoSDKCommon
+import KakaoSDKAuth
 
 @main
 struct KourseApp: App {
+    @StateObject private var authVM = AuthViewModel()
+
+    init() {
+        FirebaseApp.configure()
+        KakaoSDK.initSDK(appKey: "baf253e85faaf9d218a8569693001ef5")
+    }
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -25,7 +35,13 @@ struct KourseApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
+                .environmentObject(authVM)
+                .onOpenURL { url in
+                    if AuthApi.isKakaoTalkLoginUrl(url) {
+                        AuthController.handleOpenUrl(url: url)
+                    }
+                }
         }
         .modelContainer(sharedModelContainer)
     }
