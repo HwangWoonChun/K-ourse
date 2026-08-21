@@ -11,15 +11,29 @@
 		4FAF402D3037CEC000D857EE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 4FAF402C3037CEC000D857EE /* FirebaseAuthCombine-Community */; };
 		4FAF40303037CF2300D857EE /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4FAF402F3037CF2300D857EE /* KakaoSDKAuth */; };
 		4FAF40323037CF2300D857EE /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = 4FAF40313037CF2300D857EE /* KakaoSDKUser */; };
+		4FAF408A303834AE00D857EE /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 4FAF4089303834AE00D857EE /* NMapsMap */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		4FAE1445302EA9F4004788B0 /* Kourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4FAF408C303834C900D857EE /* Exceptions for "Kourse" folder in "Kourse" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4FAE1444302EA9F4004788B0 /* Kourse */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4FAE1447302EA9F4004788B0 /* Kourse */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4FAF408C303834C900D857EE /* Exceptions for "Kourse" folder in "Kourse" target */,
+			);
 			path = Kourse;
 			sourceTree = "<group>";
 		};
@@ -32,6 +46,7 @@
 			files = (
 				4FAF40323037CF2300D857EE /* KakaoSDKUser in Frameworks */,
 				4FAF402B3037CEC000D857EE /* FirebaseAuth in Frameworks */,
+				4FAF408A303834AE00D857EE /* NMapsMap in Frameworks */,
 				4FAF402D3037CEC000D857EE /* FirebaseAuthCombine-Community in Frameworks */,
 				4FAF40303037CF2300D857EE /* KakaoSDKAuth in Frameworks */,
 			);
@@ -80,6 +95,7 @@
 				4FAF402C3037CEC000D857EE /* FirebaseAuthCombine-Community */,
 				4FAF402F3037CF2300D857EE /* KakaoSDKAuth */,
 				4FAF40313037CF2300D857EE /* KakaoSDKUser */,
+				4FAF4089303834AE00D857EE /* NMapsMap */,
 			);
 			productName = Kourse;
 			productReference = 4FAE1445302EA9F4004788B0 /* Kourse.app */;
@@ -112,6 +128,7 @@
 			packageReferences = (
 				4FAF40293037CEC000D857EE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				4FAF402E3037CF2300D857EE /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				4FAF4088303834AE00D857EE /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4FAE1446302EA9F4004788B0 /* Products */;
@@ -279,6 +296,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = PU7DWTK8ZH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Kourse/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "쾌적한 여행 코스를 짜기위해 위치권한 동의가 필요해요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "쾌적한 여행 코스를 짜기위해 위치권한 동의가 필요해요.";
@@ -318,6 +336,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Kourse/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "쾌적한 여행 코스를 짜기위해 위치권한 동의가 필요해요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "쾌적한 여행 코스를 짜기위해 위치권한 동의가 필요해요.";
@@ -384,6 +403,14 @@
 				minimumVersion = 2.28.0;
 			};
 		};
+		4FAF4088303834AE00D857EE /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.23.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -406,6 +433,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4FAF402E3037CF2300D857EE /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDKUser;
+		};
+		4FAF4089303834AE00D857EE /* NMapsMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FAF4088303834AE00D857EE /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
+			productName = NMapsMap;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,15 +1,17 @@
 //
-//  KakaoModel.swift
+//  RouteModel.swift
 //  Kourse
 //
 
 import Foundation
+import CoreLocation  // RouteResult.path에 CLLocationCoordinate2D 사용
 
 // 경로 탐색 결과
 struct RouteResult {
-    let distance: Int       // 거리 (m)
-    let duration: Int       // 소요시간 (초)
-    let summary: String     // "도보 5분" / "차량 12분"
+    let distance: Int                           // 거리 (m)
+    let duration: Int                           // 소요시간 (초)
+    let summary: String                         // "도보 5분" / "차량 12분"
+    var path: [CLLocationCoordinate2D] = []    // 도로 경유 좌표 (없으면 직선)
 
     var durationMinutes: Int { duration / 60 }
 
@@ -26,33 +28,12 @@ struct RouteResult {
     }
 }
 
-enum TransportMode: String {
-    case walk = "도보"
-    case car = "차량"
-    case publictransit = "대중교통"
-}
-
-// 카카오 Directions REST 응답
-struct KakaoDirectionsResponse: Codable {
-    let routes: [KakaoRoute]
-}
-
-struct KakaoRoute: Codable {
-    let resultCode: Int
-    let summary: KakaoRouteSummary?
-}
-
-struct KakaoRouteSummary: Codable {
-    let distance: Int
-    let duration: Int
-}
-
 // 카카오 로컬 좌표→행정구역 응답
-struct KakaoRegionResponse: Codable {
-    let documents: [KakaoRegionDocument]
+struct GeocodingRegionResponse: Codable {
+    let documents: [GeocodingRegionDocument]
 }
 
-struct KakaoRegionDocument: Codable {
+struct GeocodingRegionDocument: Codable {
     let regionType: String
     let addressName: String
     let region1DepthName: String  // 시도

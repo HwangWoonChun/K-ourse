@@ -3,7 +3,7 @@
 //  Kourse
 
 import SwiftUI
-import MapKit
+import NMapsMap
 
 // MARK: - CourseResultView
 
@@ -13,8 +13,8 @@ struct CourseResultView: View {
     let duration: TravelDuration
     @Environment(\.dismiss) private var dismiss
 
-    // 지도 카메라 - 첫 장소 중심
-    @State private var cameraPosition: MapCameraPosition = .automatic
+    // 지도 카메라 업데이트 트리거
+    @State private var mapUpdateTrigger: UUID = UUID()
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -52,32 +52,18 @@ struct CourseResultView: View {
             }
         }
         .onAppear {
-            updateCamera()
+            mapUpdateTrigger = UUID()
         }
         .onChange(of: vm.steps) { _, _ in
-            updateCamera()
+            mapUpdateTrigger = UUID()
         }
     }
 
     // MARK: - 지도
 
     private var mapSection: some View {
-        Map(position: $cameraPosition) {
-            ForEach(Array(vm.steps.enumerated()), id: \.element.id) { index, step in
-                Annotation(step.spot.title, coordinate: coordinate(for: step.spot)) {
-                    SpotMapPin(index: index + 1, isFirst: index == 0, isLast: index == vm.steps.count - 1)
-                }
-            }
-
-            // 장소 간 경로선
-            if vm.steps.count > 1 {
-                let coords = vm.steps.map { coordinate(for: $0.spot) }
-                MapPolyline(coordinates: coords)
-                    .stroke(Color.kGreen.opacity(0.7), lineWidth: 2.5)
-            }
-        }
-        .frame(height: 300)
-        .disabled(false)
+        NaverMapView(steps: vm.steps, updateTrigger: mapUpdateTrigger)
+            .frame(height: 300)
     }
 
     // MARK: - 코스 요약 헤더
@@ -178,56 +164,8 @@ struct CourseResultView: View {
         .padding(.horizontal, 40)
     }
 
-    // MARK: - Helpers
-
-    private func coordinate(for spot: TourSpot) -> CLLocationCoordinate2D {
-        CLLocationCoordinate2D(latitude: spot.mapY, longitude: spot.mapX)
-    }
-
-    private func updateCamera() {
-        guard !vm.steps.isEmpty else { return }
-        let coords = vm.steps.map { coordinate(for: $0.spot) }
-        let region = MKCoordinateRegion(coordinates: coords) ?? MKCoordinateRegion(
-            center: coords[0],
-            latitudinalMeters: 2000,
-            longitudinalMeters: 2000
-        )
-        cameraPosition = .region(region)
-    }
 }
 
-// MARK: - SpotMapPin
-
-private struct SpotMapPin: View {
-    let index: Int
-    let isFirst: Bool
-    let isLast: Bool
-
-    private var color: Color {
-        if isFirst { return .kGreen }
-        if isLast  { return Color(hex: "#E05C5C") ?? .red }
-        return Color(hex: "#5B8DD9") ?? .blue
-    }
-
-    var body: some View {
-        VStack(spacing: 2) {
-            ZStack {
-                Circle()
-                    .fill(color)
-                    .frame(width: 30, height: 30)
-                    .shadow(color: color.opacity(0.4), radius: 4)
-                Text("\(index)")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(.white)
-            }
-            Image(systemName: "triangle.fill")
-                .font(.system(size: 6))
-                .foregroundColor(color)
-                .rotationEffect(.degrees(180))
-                .offset(y: -3)
-        }
-    }
-}
 
 // MARK: - SpotRow
 
@@ -397,22 +335,101 @@ private struct LoadingStepBar: View {
     }
 }
 
-// MARK: - MKCoordinateRegion 확장
 
-private extension MKCoordinateRegion {
-    init?(coordinates: [CLLocationCoordinate2D]) {
-        guard !coordinates.isEmpty else { return nil }
-        let lats = coordinates.map(\.latitude)
-        let lngs = coordinates.map(\.longitude)
-        let center = CLLocationCoordinate2D(
-            latitude: (lats.max()! + lats.min()!) / 2,
-            longitude: (lngs.max()! + lngs.min()!) / 2
-        )
-        let span = MKCoordinateSpan(
-            latitudeDelta: (lats.max()! - lats.min()!) * 1.5 + 0.01,
-            longitudeDelta: (lngs.max()! - lngs.min()!) * 1.5 + 0.01
-        )
-        self.init(center: center, span: span)
+// MARK: - NaverMapView
+
+private struct NaverMapView: UIViewRepresentable {
+    let steps: [CourseStep]
+    let updateTrigger: UUID
+
+    func makeUIView(context: Context) -> NMFMapView {
+        let mapView = NMFMapView()
+        mapView.mapType = .basic
+        mapView.isScrollGestureEnabled = true
+        mapView.isZoomGestureEnabled = true
+        context.coordinator.mapView = mapView
+        return mapView
+    }
+
+    func updateUIView(_ mapView: NMFMapView, context: Context) {
+        context.coordinator.clearOverlays()
+        guard !steps.isEmpty else { return }
+
+        let spotLatLngs: [NMGLatLng] = steps.map { NMGLatLng(lat: $0.spot.mapY, lng: $0.spot.mapX) }
+
+        // 마커
+        for (index, latlng) in spotLatLngs.enumerated() {
+            let marker = NMFMarker(position: latlng)
+            marker.captionText = "\(index + 1)"
+            marker.captionTextSize = 13
+            marker.captionColor = .white
+            marker.captionHaloColor = markerColor(index: index, total: steps.count)
+            marker.iconTintColor = markerColor(index: index, total: steps.count)
+            marker.width = 30
+            marker.height = 38
+            marker.zIndex = 10
+            marker.mapView = mapView
+            context.coordinator.markers.append(marker)
+        }
+
+        // 경로 폴리라인
+        var allPathLatLngs: [NMGLatLng] = []
+        for step in steps {
+            guard let route = step.routeToNext, !route.path.isEmpty else { continue }
+            let routeLatLngs = route.path.map { NMGLatLng(lat: $0.latitude, lng: $0.longitude) }
+            allPathLatLngs.append(contentsOf: routeLatLngs)
+            if let polyline = NMFPolylineOverlay(routeLatLngs) {
+                polyline.color = UIColor(red: 0.27, green: 0.67, blue: 0.42, alpha: 0.85)
+                polyline.width = 4
+                polyline.mapView = mapView
+                context.coordinator.polylines.append(polyline)
+            }
+        }
+
+        // 카메라: 레이아웃이 끝난 뒤 적용해야 bounds 계산이 정확함
+        let allLatLngs = spotLatLngs + allPathLatLngs
+        context.coordinator.pendingBoundsLatLngs = allLatLngs
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak coordinator = context.coordinator] in
+            guard let coordinator, let mapView = coordinator.mapView,
+                  let latlngs = coordinator.pendingBoundsLatLngs,
+                  !latlngs.isEmpty else { return }
+            coordinator.pendingBoundsLatLngs = nil
+
+            // bounds를 직접 계산 (NMGLatLngBounds 생성자 안전하게)
+            let lats = latlngs.map(\.lat)
+            let lngs = latlngs.map(\.lng)
+            let sw = NMGLatLng(lat: lats.min()!, lng: lngs.min()!)
+            let ne = NMGLatLng(lat: lats.max()!, lng: lngs.max()!)
+            let bounds = NMGLatLngBounds(southWest: sw, northEast: ne)
+
+            let cameraUpdate = NMFCameraUpdate(fit: bounds, padding: 60)
+            cameraUpdate.animation = .easeIn
+            cameraUpdate.animationDuration = 0.4
+            mapView.moveCamera(cameraUpdate)
+        }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    private func markerColor(index: Int, total: Int) -> UIColor {
+        if index == 0 { return UIColor(red: 0.27, green: 0.67, blue: 0.42, alpha: 1) }
+        if index == total - 1 { return UIColor(red: 0.88, green: 0.36, blue: 0.36, alpha: 1) }
+        return UIColor(red: 0.36, green: 0.55, blue: 0.85, alpha: 1)
+    }
+
+    class Coordinator: NSObject {
+        weak var mapView: NMFMapView?
+        var markers: [NMFMarker] = []
+        var polylines: [NMFPolylineOverlay] = []
+        var pendingBoundsLatLngs: [NMGLatLng]?
+
+        func clearOverlays() {
+            markers.forEach { $0.mapView = nil }
+            markers = []
+            polylines.forEach { $0.mapView = nil }
+            polylines = []
+            pendingBoundsLatLngs = nil
+        }
     }
 }
 

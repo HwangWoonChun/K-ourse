@@ -31,7 +31,7 @@ final class CourseViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     private let tourAPI = TourAPIService.shared
-    private let kakaoAPI = KakaoAPIService.shared
+    private let naverDir = NaverDirectionsService.shared
 
     func generateCourse(
         latitude: Double,
@@ -82,12 +82,12 @@ final class CourseViewModel: ObservableObject {
                 if i < selected.count - 1 {
                     let from = (lat: spot.mapY, lng: spot.mapX)
                     let to   = (lat: selected[i + 1].mapY, lng: selected[i + 1].mapX)
-                    let walk = kakaoAPI.estimateWalkDuration(from: from, to: to)
 
-                    if walk.distance < 1000 {
-                        routeToNext = walk
+                    // Naver Directions로 실제 도로 경로 확보, 실패 시 직선 도보 추정
+                    if let carRoute = try? await naverDir.fetchRoute(from: from, to: to) {
+                        routeToNext = carRoute
                     } else {
-                        routeToNext = (try? await kakaoAPI.fetchRoute(from: from, to: to)) ?? walk
+                        routeToNext = naverDir.estimateWalkRoute(from: from, to: to)
                     }
                     total += routeToNext?.duration ?? 0
                 }
@@ -123,7 +123,7 @@ final class CourseViewModel: ObservableObject {
             if i < spots.count - 1 {
                 let from = (lat: spot.mapY, lng: spot.mapX)
                 let to   = (lat: spots[i + 1].mapY, lng: spots[i + 1].mapX)
-                let walk = kakaoAPI.estimateWalkDuration(from: from, to: to)
+                let walk = naverDir.estimateWalkRoute(from: from, to: to)
                 routeToNext = walk
                 total += walk.duration
             }
